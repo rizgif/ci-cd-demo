@@ -2,6 +2,20 @@ pipeline {
     agent any
 
     stages {
+        stage('Verify Docker') {
+            steps {
+                script {
+                    // Check if Docker is available
+                    try {
+                        sh 'docker --version'
+                        echo "Docker is accessible."
+                    } catch (Exception e) {
+                        error "Docker is not available: ${e}"
+                    }
+                }
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 retry(3) {
@@ -9,6 +23,7 @@ pipeline {
                 }
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -17,6 +32,7 @@ pipeline {
                 }
             }
         }
+
         stage('Push Docker Image') {
             steps {
                 script {
@@ -40,9 +56,11 @@ pipeline {
                 }
             }
         }
+
         failure {
             echo 'Pipeline failed.'
         }
+
         success {
             echo 'Pipeline succeeded.'
         }
