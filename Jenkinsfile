@@ -4,13 +4,13 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/your-username/ci-cd-demo.git'
+                git 'https://github.com/rizgif/ci-cd-demo.git'
             }
         }
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build('your-dockerhub-username/ci-cd-demo:latest')
+                    docker.build('rizgif/ci-cd-demo:latest')
                 }
             }
         }
@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        docker.image('your-dockerhub-username/ci-cd-demo:latest').push()
+                        docker.image('rizgif/ci-cd-demo:latest').push()
                     }
                 }
             }
