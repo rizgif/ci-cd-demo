@@ -5,7 +5,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 retry(3) {
-                    git branch: 'main', url: 'https://github.com/rizgif/ci-cd-demo.git'
+                    git branch: 'main', url: 'https://github.com/rizgif/ci-cd-demo.git',git credentialsId: 'github-pat'
                 }
             }
         }
