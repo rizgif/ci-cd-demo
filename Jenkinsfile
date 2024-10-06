@@ -4,7 +4,9 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/rizgif/ci-cd-demo.git'
+                retry(3) {
+                    git branch: 'main', url: 'https://github.com/rizgif/ci-cd-demo.git'
+                }
             }
         }
         stage('Build Docker Image') {
