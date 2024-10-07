@@ -2,19 +2,15 @@ pipeline {
     agent any
 
     stages {
-        stage('Initial Setup') {
-            parallel {
-                stage('Verify Docker') {
-                    steps {
-                        sh 'docker --version'
-                    }
-                }
-                stage('Clone Repository') {
-                    steps {
-                        retry(3) {
-                            git branch: 'main', url: 'https://github.com/rizgif/ci-cd-demo.git', credentialsId: 'github-pat'
-                        }
-                    }
+        stage('Verify Docker') {
+            steps {
+                sh 'docker --version'
+            }
+        }
+        stage('Clone Repository') {
+            steps {
+                retry(3) {
+                    git branch: 'main', url: 'https://github.com/rizgif/ci-cd-demo.git', credentialsId: 'github-pat'
                 }
             }
         }
@@ -27,7 +23,7 @@ pipeline {
         }
         stage('Push Docker Image') {
             steps {
-                retry(3) {
+                script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
                         docker.image('rizgif/ci-cd-demo:latest').push()
                     }
@@ -38,13 +34,11 @@ pipeline {
 
     post {
         always {
-            cleanup {
-                script {
-                    try {
-                        sh 'docker system prune -f'
-                    } catch (Exception e) {
-                        echo 'Error during Docker cleanup: ' + e.toString()
-                    }
+            script {
+                try {
+                    sh 'docker system prune -f'
+                } catch (Exception e) {
+                    echo 'Error during Docker cleanup: ' + e.toString()
                 }
             }
         }
